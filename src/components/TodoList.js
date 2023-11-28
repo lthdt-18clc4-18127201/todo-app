@@ -1,42 +1,47 @@
 import React from 'react'
 import CustomButton from '../components/CustomButton';
+import { useStore, actions } from '../store';
 
-const TodoList = ({
-    todos, 
-    setTodos, 
-    setEditTodo,
-    filter,
-    setFilter
-}) => {
+const TodoList = () => {
+
+    const [ state, dispatch ] = useStore();
+    const { todos, filterInput, editTodo } = state;
 
     const handleComplete = (todo) => {
-        setTodos(
+        dispatch(actions.setTodoCompleted(
             todos.map((item) => {
-                if(item.id === todo.id) return {...item, completed: !item.completed}
+                if(item.id === todo.id) return item.completed = !item.completed
                 return item;
             })
-        )
+        ))
     }
 
     const handleEdit = ({id}) => {
         const findTodo = todos.find((todo) => todo.id === id);
-        setEditTodo(findTodo);
+        // setEditTodo(findTodo);
+        if(editTodo !== '') {
+            dispatch(actions.setEditTodo(findTodo))
+        }
+        dispatch(actions.setTodoInput(findTodo.title));
     }
 
     const handleDelete = ({id}) => {
-        setTodos(todos.filter((todo) => todo.id !== id))
+        dispatch(actions.deleteTodo(todos.filter((todo) => todo.id !== id)));
     };
 
 
     return (
         <div>
             {todos.filter((item) => {
-                return filter.toLowerCase() === '' 
+                return filterInput.toLowerCase() === '' 
                     ? item
-                    : item.title.toLowerCase().includes(filter)
+                    : item.title.toLowerCase().includes(filterInput)
             }).map((todo) => (
-                <li className={`list-item ${todo.completed ? "complete" : ""}`} key={todo.id}>
-                    <input 
+                <li 
+                    className={`list-item ${todo.completed ? "complete" : ""}`} 
+                    key={todo.id}
+                >
+                    <input
                         type='text' 
                         value={todo.title} 
                         className={`list ${todo.completed ? "complete" : ""}`}

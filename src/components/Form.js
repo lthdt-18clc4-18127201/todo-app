@@ -1,55 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useStore, actions } from '../store';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddForm = ({
-    input, 
-    setInput, 
-    todos, 
-    setTodos, 
-    editTodo, 
-    setEditTodo,
-    filter,
-    setFilter
-}) => {
+const Form = () => {
+
+    const inputRef = useRef()
+
+    const [ state, dispatch ] = useStore();
+    const { todos, todoInput, editTodo } = state;
 
     const onInputChange = (e) => {
-        setInput(e.target.value);
+        dispatch(actions.setTodoInput(e.target.value));
     };
 
-    const updateTodo = (title, id, completed) => {
+    const updatedTodo = (title, id, completed) => {
         const newTodo = todos.map((todo) =>
             todo.id === id ? { title, id, completed } : todo
         );
-        setTodos(newTodo);
-        setEditTodo("");
+        console.log(newTodo);
+        dispatch(actions.updateTodo(newTodo));
+        dispatch(actions.setTodoInput(''));
     }
 
     const onFormSubmit = (e) => {
         e.preventDefault();
         if(!editTodo) {
-            setTodos([...todos, {id: uuidv4(), title: input, completed: false}]);
-            setInput('');
+            dispatch(actions.addTodo({id: uuidv4(), title: todoInput, completed: false}));
+            dispatch(actions.setTodoInput(""));
+            inputRef.current.focus();
         } else {
-            updateTodo(input, editTodo.id, editTodo.completed);
+            updatedTodo(todoInput, editTodo.id, editTodo.completed);
         }
     };
     
     useEffect(() => {
         if(editTodo) {
-            setInput(editTodo.title);
+            dispatch(actions.setTodoInput(editTodo.title));
+            dispatch(actions.updateTodo(editTodo.title));
         } else {
-            setInput("");
+            dispatch(actions.setTodoInput(""));
         }
-    }, [setInput, editTodo]);
+    }, [dispatch, editTodo]);
 
     return (
         <>
             <form onSubmit={onFormSubmit}>
                 <input 
+                    ref={inputRef}
                     type='text' 
                     placeholder='Enter a todo...' 
                     className='input-field'
-                    value={input}
+                    value={todoInput}
                     required
                     onChange={onInputChange}
                     />
@@ -57,7 +58,7 @@ const AddForm = ({
                     {editTodo ? "OK" : "Add"}
                 </button>
             </form>
-            <form>
+            {/* <form>
                 <input 
                     type='text' 
                     placeholder='Enter keyword...' 
@@ -66,9 +67,9 @@ const AddForm = ({
                     required
                     onChange={(e) => setFilter(e.target.value)}
                 />
-            </form>
+            </form> */}
         </>
     )
 }
 
-export default AddForm;
+export default Form;

@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useStore, actions } from './store';
 import Header from './components/Header';
 import Form from './components/Form';
 import TodoList from './components/TodoList';
 import './App.css'
 
 function App() {
-    const initialState = JSON.parse(localStorage.getItem("todos")) || [];
-    const [input, setInput] = useState('');
-    const [todos, setTodos] = useState(initialState);
-    const [editTodo, setEditTodo] = useState(null);
-    const [filter, setFilter] = useState('');
+    // const initialState = JSON.parse(localStorage.getItem("todos")) || [];
+    const [ state, dispatch ] = useStore();
+    const { todos } = state;
 
     useEffect(() => {
         localStorage.setItem("todos", JSON.stringify(todos));
@@ -21,25 +20,10 @@ function App() {
                     <Header />
                 </div>
                 <div>
-                    <Form 
-                        input={input}
-                        setInput={setInput}
-                        todos={todos}
-                        setTodos={setTodos}
-                        editTodo={editTodo}
-                        setEditTodo={setEditTodo}
-                        filter={filter}
-                        setFilter={setFilter}
-                    />
+                    <Form />
                 </div>
                 <div>
-                    <TodoList 
-                        todos={todos} 
-                        setTodos={setTodos}
-                        setEditTodo={setEditTodo}
-                        filter={filter}
-                        setFilter={setFilter}
-                    />
+                    <TodoList />
                 </div>
             </div>
         </div>
