@@ -9,6 +9,11 @@ router.get('/', async (req, res) => {
     res.json(list);
 });
 
+router.get('/:id', async (req, res) => {
+    const data = await todoModel.findById({_id: req.params.id});
+    res.json(data);
+});
+
 router.post('/', async(req, res) => {
     try {   
         const newTodo = new todoModel({

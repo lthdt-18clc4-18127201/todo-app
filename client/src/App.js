@@ -1,24 +1,19 @@
 import React from "react";
-import Header from "./components/Header";
-import Form from "./components/Form";
-import TodoList from "./components/TodoList";
+import {
+    Routes,
+    Route
+} from 'react-router-dom';
 import "./App.css";
+import Home from './pages/Home';
+import Login from './pages/Login';
 
-function App() {
+function App() {    
+
     return (
-        <div className="container">
-                <div className="app-wrapper">
-                    <div>
-                        <Header />
-                    </div>
-                    <div>
-                        <Form />
-                    </div>
-                    <div>
-                        <TodoList />
-                    </div>
-                </div>
-        </div>
+        <Routes>
+            <Route path='/' element={<Home />}/>
+            <Route path='/login' element={<Login />} />
+        </Routes>
     );
 }
 
